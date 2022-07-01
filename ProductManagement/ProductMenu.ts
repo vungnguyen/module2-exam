@@ -27,7 +27,7 @@ export class ProductMenu {
                     break;
                 }
                 case ProductChoice.SEARCH_BY_NAME: {
-                    this.findByName();
+                    this.searchByName();
                     break
                 }
                 case ProductChoice.ADD_PRODUCT: {
@@ -49,20 +49,19 @@ export class ProductMenu {
         console.log('--Xóa mặt hàng khỏi ứng dụng--');
         let products = this.productManagement.getAll();
         if (products.length == 0) {
-            console.log('không có hàng hóa!')
+            console.log('======== Hiện chưa  có hàng hóa! ========')
         }else {
             for (let product of products) {
-                console.log(`Id: ${product.id} | Tên: ${product.name} | Loại : ${product.type} | | Gia: ${product.price} | Số lượng: ${product.amount} | Ngày tạo: ${product.creationDate} | Mô tả: ${product.description} `)
+                console.log(`Id: ${product.id} | Tên mặt hàng: ${product.name} | Loại : ${product.type} | | Giá: ${product.price} | Số lượng: ${product.amount} | Ngày tạo: ${product.creationDate} | Mô tả: ${product.description} `)
             }
-        }
-
-        let idRemove = +rl.question('Nhập mã mặt hàng muốn xóa: ');
-        let lengthProduct = products.length;
-        this.productManagement.removeById(idRemove);
-        if (lengthProduct !== products.length) {
-            console.log('Xóa thành công!');
-        } else {
-            console.log('Xóa thật bại!');
+            let idRemove = +rl.question('Nhập mã mặt hàng muốn xóa: ');
+            let indexProduct = this.productManagement.findById(idRemove);
+            if(indexProduct !== -1) {
+                this.productManagement.removeById(idRemove);
+                console.log('Xoá thành công!');
+            }else {
+                console.log('Không tồn tại mã hàng cần xóa!');
+            }
         }
     }
 
@@ -70,59 +69,65 @@ export class ProductMenu {
         console.log('--Chỉnh sửa thông tin mặt hàng--');
         let products = this.productManagement.getAll();
         if (products.length == 0) {
-            console.log('không có hàng hóa!')
+            console.log('======= không có hàng hóa để chỉnh sửa , cần thêm vào! ========')
         }
         else {
             for (let i = 0; i < products.length; i++) {
-                console.log(`Id: ${products[i].id} | Tên: ${products[i].name}`)
+                console.log(`Id: ${products[i].id} | Tên mặt hàng: ${products[i].name} | Loại : ${products[i].type} | | Giá: ${products[i].price} | Số lượng: ${products[i].amount} | Ngày tạo: ${products[i].creationDate} | Mô tả: ${products[i].description}  `)
             }
-        }
-        let idProduct = +rl.question("Nhập id danh mục muốn sửa:")
-        let indexUpdate = this.productManagement.findById(idProduct);
-        if (indexUpdate !== -1) {
-            let product = this.inputProduct();
-            product.id = idProduct;
-            this.productManagement.updateById(idProduct, product);
-            console.log('Sửa hàng hóa thành công!');
-        } else {
-            console.log('Nhập sai mã mặt hàng!')
+            let idProduct = +rl.question("Nhập id hàng hóa muốn sửa:")
+            console.log('Cập nhật hàng hóa')
+            let indexUpdate = this.productManagement.findById(idProduct);
+            if (indexUpdate !== -1) {
+                let product = this.inputProduct();
+                product.id = idProduct;
+                this.productManagement.updateById(idProduct, product);
+                console.log('Cập nhật lại hàng hóa thành công!');
+            } else {
+                console.log('Không tồn tại mã hàng cần update !')
+            }
         }
     }
 
-     findByName() {
+     searchByName() {
         console.log('--Tìm kiếm hàng hóa theo tên--')
         let products = this.productManagement.getAll();
-        let arrLinearSearch = [];
-        let nameProduct = rl.question('nhập tên hàng hóa: ');
-        let flag = true;
-        for (let i = 0; i < products.length; i++) {
-            if (products[i].name.includes(nameProduct)) {
-                arrLinearSearch.push(products[i]);
-            } else {
-                flag = false;
+        if (products.length == 0){
+            console.log('====== Hiện chưa có hàng hóa, cần thêm vào! ====== ')
+        }else {
+            let arrLinearSearch = [];
+            let nameProduct = rl.question('nhập tên hàng hóa: ');
+            let flag = true;
+            for (let i = 0; i < products.length; i++) {
+                if (products[i].name.includes(nameProduct)) {
+                    arrLinearSearch.push(products[i]);
+                } else {
+                    flag = false;
+                }
             }
-        }
-        if (arrLinearSearch.length != 0) {
-            flag = true;
-        }
-        if (flag) {
-            for (let product of arrLinearSearch) {
-                console.log(`Id: ${product.id} | Tên: ${product.name} | Loại : ${product.type} | | Gia: ${product.price} | Số lượng: ${product.amount} | Ngày tạo: ${product.creationDate} | Mô tả: ${product.description}  `)
+            if (arrLinearSearch.length != 0) {
                 flag = true;
             }
-        } else {
-            console.log('Mặt hàng không tồn tại')
+            if (flag) {
+                for (let product of arrLinearSearch) {
+                    console.log(`Id: ${product.id} | Tên mặt hàng: ${product.name} | Loại : ${product.type} | | Giá: ${product.price} | Số lượng: ${product.amount} | Ngày tạo: ${product.creationDate} | Mô tả: ${product.description}  `)
+                    flag = true;
+                }
+            } else {
+                console.log('Không có dữ liệu phù hợp')
+            }
         }
+
     }
 
      creatProduct() {
+        console.log('--Thêm mặt hàng mới--');
         let product = this.inputProduct();
         this.productManagement.creatNew(product);
         console.log('Thêm thành công!')
     }
 
      inputProduct() {
-        console.log('--Thêm mặt hàng mới--');
          let name = this.inputName();
          let type = ProductMenu.inputType();
          let price = ProductMenu.inputPrice();
@@ -141,9 +146,6 @@ export class ProductMenu {
             if (!regexForDescription.test(description)) {
                 isValidDescription = false;
                 console.log('Mô tả không hợp lệ')
-            } else if (description == '') {
-                isValidDescription = false;
-                console.log('không được để trống')
             } else {
                 isValidDescription = true;
             }
@@ -156,7 +158,7 @@ export class ProductMenu {
         do {
             amount = +rl.question('Nhập số lượng: ');
             if (amount <= 0) {
-                console.log("----Giá trị nhập vào không đúng---")
+                console.log("----Giá trị nhập vào phải là số dương---")
             }
         } while (amount <= 0)
         return amount;
@@ -167,7 +169,7 @@ export class ProductMenu {
         do {
             price = +rl.question('Nhập giá sản phẩm: ')
             if (price <= 0) {
-                console.log("----Giá trị nhập vào không đúng----")
+                console.log("----Giá trị nhập vào phải là số dương----")
             }
         } while (price <= 0)
         return price;
@@ -181,7 +183,7 @@ export class ProductMenu {
             console.log('--Nhập loại hàng hóa--');
             console.log('1. laptop');
             console.log('2. điện thoại');
-            choice = +rl.question('Nhap lua chon cua ban: ');
+            choice = +rl.question('Nhập lựa chọn của bạn: ');
             if (choice == 1) {
                 type = 'laptop';
                 isValidChoice = true;
@@ -189,7 +191,7 @@ export class ProductMenu {
                 type = 'điện thoại';
                 isValidChoice = true;
             } else {
-                console.log(' 1, hoặc 2');
+                console.log(' Chọn 1 hoặc 2');
                 isValidChoice = false;
             }
         } while (!isValidChoice)
@@ -200,8 +202,8 @@ export class ProductMenu {
         let name = '';
         let isValidName = true;
         do {
-            name = rl.question('Nhập tên(nhiều nhất 9 ký tự): ');
-            let regexForName: RegExp = /^[a-zA-Z\d]{2,9}$/g
+            name = rl.question('Nhập tên (không được bỏ trống, nhiều nhất 9 ký tự): ');
+            let regexForName: RegExp = /^[a-zA-Z\d]{1,9}$/g
             if (!regexForName.test(name)) {
                 isValidName = false;
                 console.log('Tên không hợp lệ')
@@ -210,9 +212,6 @@ export class ProductMenu {
                 let currentName = this.productManagement.findByName(name);
                 if (currentName) {
                     console.log('Tên đã tồn tại');
-                    isValidName = false;
-                } else if (name == '') {
-                    console.log('không được để trống')
                     isValidName = false;
                 } else {
                     isValidName = true;
@@ -226,10 +225,10 @@ export class ProductMenu {
         console.log('--Hiển thị danh sách hàng hóa--');
         let products = this.productManagement.getAll();
         if (products.length == 0){
-            console.log('không có hàng hóa')
+            console.log('====== không có hàng hóa! =======')
         }else {
             for (let i = 0; i < products.length; i++) {
-                console.log(`ID: ${i + 1} | Tên: ${products[i].name} | Loại hàng: ${products[i].type} | Giá: ${products[i].price} | Số lượng: ${products[i].amount} | Ngày tạo: ${products[i].creationDate}  | Mô tả: ${products[i].description}`)
+                console.log(`ID: ${i + 1} | Tên mặt hàng: ${products[i].name} | Loại hàng: ${products[i].type} | Giá: ${products[i].price} | Số lượng: ${products[i].amount} | Ngày tạo: ${products[i].creationDate}  | Mô tả: ${products[i].description}`)
             }
         }
 
