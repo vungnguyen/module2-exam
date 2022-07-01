@@ -3,7 +3,7 @@ import {Product} from "../model/product";
 
 export class ProductManagement implements IProductManagement<Product> {
     private static id: number = 0;
-    private static products: Product[] = [];
+    static products: Product[] = [];
     creatNew(t: Product): void {
         ProductManagement.id ++ ;
         t.id = ProductManagement.id;
@@ -37,6 +37,14 @@ export class ProductManagement implements IProductManagement<Product> {
             ProductManagement.products[index] = t;
         }
 
+    }
+    findByName(name: string): Product | null {
+        for(let i = 0; i < ProductManagement.products.length; i++){
+            if(ProductManagement.products[i].name == name){
+                return ProductManagement.products[i];
+            }
+        }
+        return null;
     }
 
 }

@@ -4,11 +4,10 @@ export class Product {
     private _type: string;
     private _price: number;
     private _amount: number;
-    private _creationDate: string;
+    private _creationDate: Date;
     private _description: string;
 
-
-    constructor( name: string, type: string, price: number, amount: number, creationDate: string, description: string) {
+    constructor( name: string, type: string, price: number, amount: number, creationDate: Date, description: string) {
         this._name = name;
         this._type = type;
         this._price = price;
@@ -57,11 +56,11 @@ export class Product {
         this._amount = value;
     }
 
-    get creationDate(): string {
+    get creationDate(): Date {
         return this._creationDate;
     }
 
-    set creationDate(value: string) {
+    set creationDate(value: Date) {
         this._creationDate = value;
     }
 
